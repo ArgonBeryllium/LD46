@@ -6,6 +6,7 @@ import dev.arbe.engine.states.State;
 import dev.arbe.engine.systems.animation.Puppeteer;
 import dev.arbe.engine.systems.animation.SpriteAnimation;
 import dev.arbe.engine.systems.rendering.TexturedRenderer;
+import dev.arbe.engine.systems.sound.SoundSystem;
 import dev.arbe.ld46.Main;
 import dev.arbe.ld46.states.GameplayState;
 
@@ -29,7 +30,7 @@ public class Effects
 		sO.addComponent(new TexturedRenderer(2, null));
 		aO.addComponent(aP);
 		sO.addComponent(sP);
-		aP.addAnimation(new SpriteAnimation(15,  Main.sheets.getAsset("alert").sprites));
+		aP.addAnimation(new SpriteAnimation(15,  Main.sheets.getAsset("alert.wav").sprites));
 		sP.addAnimation(new SpriteAnimation(10,  Main.sheets.getAsset("splatter").sprites));
 		aL = 0;
 		sL = 0;
@@ -54,6 +55,7 @@ public class Effects
 
 	public static void splatter(WVec2 pos)
 	{
+		SoundSystem.playSFX(Main.sounds.getAsset("kill"));
 		sP.getParent().transform.pos = pos;
 		sP.setActiveIndex(0, true);
 		sP.getParent().getComponent(TexturedRenderer.class).active = true;
@@ -62,6 +64,7 @@ public class Effects
 	}
 	public static void alert(WVec2 pos)
 	{
+		SoundSystem.playSFX(Main.sounds.getAsset("alert"));
 		aP.getParent().transform.pos = pos;
 		aP.setActiveIndex(0, true);
 		aP.getParent().getComponent(TexturedRenderer.class).active = true;

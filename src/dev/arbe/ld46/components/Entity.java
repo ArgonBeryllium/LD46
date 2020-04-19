@@ -34,7 +34,7 @@ public class Entity extends BasicAABB
 		WVec2 step = new WVec2();
 
 		int iters = 0;
-		while (Vec2.distSquared(seeker, target) > 1 && iters++ < 200)
+		while (Vec2.distSquared(seeker, target) > 1 && iters++ < 300)
 		{
 			for(int i = 0; i < 5; i++)
 			{

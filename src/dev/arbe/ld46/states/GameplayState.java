@@ -26,7 +26,7 @@ import static java.lang.Math.atan2;
 public class GameplayState extends State
 {
 	static final float ACTION_DISTANCE = 3,
-						DUR_HIDE = .85f, DUR_CHOMP = 1.6f;
+						DUR_HIDE = .85f, DUR_CHOMP = 1.2f;
 
 	WVec2 inVec;
 
@@ -47,6 +47,7 @@ public class GameplayState extends State
 	static float shakeAmt;
 	static float timer_camShake = 0;
 
+
 	public static void cameraShake(float amt)
 	{
 		shakeAmt = amt;
@@ -64,6 +65,7 @@ public class GameplayState extends State
 	{
 		time = 0;
 
+		mainCam.scale = 1;
 		timer_monsterAnim = 0;
 		timer_monsterHide = 0;
 		timer_monsterChomp = 0;
@@ -108,7 +110,7 @@ public class GameplayState extends State
 		//region creating the player and the monster
 		player = createObj(new GameObject());
 		player.addComponent(new TexturedRenderer(Main.sheets.getAsset("people").sprites[0]));
-		player.transform.pos = new WVec2(4, 3);
+		player.transform.pos = new WVec2(5, 31);
 		player.addComponent(new Entity());
 
 		GameObject o = createObj(new GameObject());
@@ -118,6 +120,7 @@ public class GameplayState extends State
 		o.addComponent(new Puppeteer(
 				new SpriteAnimation(5, Main.sheets.getAsset("monster_pulse").sprites),
 				new SpriteAnimation(25, Main.sheets.getAsset("monster_bite").sprites)));
+		o.transform.pos = player.transform.pos;
 		//endregion
 		//region setting up the hovertext
 		o = createObj(new GameObject());
@@ -127,7 +130,7 @@ public class GameplayState extends State
 		cText.size = 5;
 		//endregion
 		Effects.init();
-		for (int i = 0; i < 16; i++)
+		for (int i = 0; i < 32; i++)
 		{
 			GameObject villager = createObj(new GameObject());
 			int t = Main.r.nextInt(map.w * map.h);
@@ -149,14 +152,13 @@ public class GameplayState extends State
 	public void update(double delta)
 	{
 		time += delta / 7;
-		DebugUtils.countFrames();
 
 		if (time >= 12)
 		{
 			setActiveState(2);
 			return;
 		}
-		BasicAABB.handleCols();
+		BasicAABB.handleCols(delta);
 		Effects.update(delta);
 
 		//region camera control
@@ -165,9 +167,9 @@ public class GameplayState extends State
 		if (InputSystem.getKey(VK_I) && mainCam.scale < 1)
 			mainCam.scale += delta;
 
-		mainCam.pos = Vec2.lerp(mainCam.pos, player.transform.pos, (float) delta * 3 * (InputSystem.getKey(VK_SHIFT) ? 1.5f : 1));
+		mainCam.pos = Vec2.lerp(mainCam.pos, player.transform.pos, (float) delta * 3);
 		//endregion
-		player.transform.pos = player.transform.pos.plus(inVec.times(delta * 2));
+		player.transform.pos = player.transform.pos.plus(inVec.times(delta * 2 * (InputSystem.getKey(VK_SHIFT) ? 1.5f : 1)));
 
 		//region animation & aesthetics
 		monster.getParent().getComponent(TexturedRenderer.class).active = !monster.hidden;
@@ -218,7 +220,7 @@ public class GameplayState extends State
 		selObj = null;
 		for (GameObject o : objs)
 		{
-			if (BasicAABB.contains(o.transform, mpos))
+			if (BasicAABB.contains(o.transform, mpos) && o != player && o != monster.getParent())
 			{
 				selObj = o;
 				break;
@@ -296,7 +298,6 @@ public class GameplayState extends State
 //			g.drawLine((int)pp.x, (int)pp.y, (int)pc.x, (int)pc.y);
 //		}
 		//endregion
-		//DebugUtils.countFrames();
 	}
 
 	@Override

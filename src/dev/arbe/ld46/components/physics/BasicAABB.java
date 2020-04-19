@@ -67,6 +67,37 @@ public class BasicAABB extends Scriptable
 			}
 		}
 	}
+	public static void handleCols(double delta)
+	{
+		for(int i = 0; i < allAABBs.size(); i++)
+		{
+			if(allAABBs.get(i)==null)
+			{
+				allAABBs.remove(i);
+				i--;
+				continue;
+			}
+			BasicAABB b1 = allAABBs.get(i);
+			for(int j = i+1; j < allAABBs.size(); j++)
+			{
+				if(allAABBs.get(j)==null)
+				{
+					allAABBs.remove(j);
+					j--;
+					continue;
+				}
+				BasicAABB b2 = allAABBs.get(j);
+				if(b1.overlaps(b2))
+				{
+					if(!b1.isPassive && !b2.isPassive)
+						b1.resolveCol(b2, delta);
+
+					b1.onCollision(b2);
+					b2.onCollision(b1);
+				}
+			}
+		}
+	}
 
 	public void resolveCol(BasicAABB other)
 	{
@@ -128,8 +159,8 @@ public class BasicAABB extends Scriptable
 		}
 		//endregion
 
-		thisAmt *= .05f * delta;
-		otherAmt *= .05f * delta;
+		thisAmt *=	3 * delta;
+		otherAmt *= 3 * delta;
 
 		this.parent.transform.pos = this.parent.transform.pos.plus(n.times(thisAmt));
 		other.parent.transform.pos = other.parent.transform.pos.minus(n.times(otherAmt));

@@ -3,7 +3,10 @@ package dev.arbe.ld46.components.other;
 import dev.arbe.engine.GameObject;
 import dev.arbe.engine.maths.vectors.WVec2;
 import dev.arbe.engine.states.State;
+import dev.arbe.engine.systems.rendering.BasicRenderer;
 import dev.arbe.ld46.components.physics.BasicAABB;
+
+import java.awt.*;
 
 public class AOE
 {
@@ -11,6 +14,7 @@ public class AOE
 	{
 		GameObject a = State.getActiveState().createObj(new GameObject());
 		a.transform.pos = pos;
+		a.tag = tag;
 
 		BasicAABB b = new BasicAABB();
 		b.isPassive = true;

@@ -1,5 +1,6 @@
 package dev.arbe.ld46.components;
 
+import dev.arbe.engine.Game;
 import dev.arbe.engine.GameObject;
 import dev.arbe.engine.WindowManager;
 import dev.arbe.engine.maths.vectors.SVec2;
@@ -75,10 +76,18 @@ public class Villager extends Entity
 		cs = 0;
 	}
 
+	public boolean onScreen()
+	{
+		SVec2 sc = State.getActiveState().mainCam.toScreenCoords(min);
+		SVec2 ss = Camera.toScreenScale(parent.transform.scl, State.getActiveState().mainCam.scale);
+		return sc.x + ss.x/2 > 0 && sc.y + ss.y/2 > 0 && sc.x - ss.x/2 < WindowManager.getWidth() && sc.y - ss.y/2 < WindowManager.getHeight();
+	}
+
 	@Override
 	public void onEvent(GameEvent event)
 	{
 		super.onEvent(event);
+		if(!onScreen())return;
 
 		if(event.type == GameEvent.eventType.frame)
 		{
@@ -114,20 +123,20 @@ public class Villager extends Entity
 				initiateWander();
 
 			//region sight
-			Graphics g = WindowManager.getGraphics();
+//			Graphics g = WindowManager.getGraphics();
 			GameObject seen = null;
-			for(float i = -1; i < 2; i+=.66)
+			for(float i = -1; i <= 1; i+=.66)
 			{
 				float f = (float) ((float)i * .4f + getParent().getComponent(Renderer.class).renderTransform.angle - PI/2);
 
-				g.setColor(Color.white);
+//				g.setColor(Color.white);
 				seen = Raycast.rayCast(getParent(), new WVec2(cos(f), sin(f)).normalised(), PERCEPTION);
 				SVec2 p = Camera.getMain().toScreenCoords(parent.transform.pos);
 				SVec2 d = Camera.toScreenScale(new WVec2(cos(f), sin(f)).normalised().times(PERCEPTION), Camera.getMain().scale);
 
 				if(seen != null)
 				{
-					g.setColor(Color.red);
+//					g.setColor(Color.red);
 					switch (seen.tag)
 					{
 						case "villager":
@@ -136,12 +145,14 @@ public class Villager extends Entity
 							break;
 						case "monster":
 							if(seen.getComponent(Monster.class).hidden)break;
+							getAlerted();
+							break;
 						case "murder":
 							getAlerted();
 							break;
 					}
 				}
-				g.drawLine((int)p.x, (int)p.y, (int)p.x + (int)d.x, (int)p.y + (int)d.y);
+//				g.drawLine((int)p.x, (int)p.y, (int)p.x + (int)d.x, (int)p.y + (int)d.y);
 			}
 			//endregion
 

@@ -6,6 +6,7 @@ import dev.arbe.engine.systems.GameEvent;
 import dev.arbe.engine.systems.rendering.Renderer;
 import dev.arbe.engine.systems.rendering.TexturedRenderer;
 import dev.arbe.engine.systems.scriptable.Scriptable;
+import dev.arbe.engine.systems.sound.SoundSystem;
 import dev.arbe.ld46.GameManager;
 import dev.arbe.ld46.Main;
 import dev.arbe.ld46.components.effects.Effects;
@@ -54,6 +55,7 @@ public class Monster extends Scriptable
 		place.getParent().getComponent(TexturedRenderer.class).sprite = Main.sheets.getAsset("tiles").sprites[6];
 		hp.occupied = true;
 		hidden = true;
+		SoundSystem.playSFX(Main.sounds.getAsset("hide"));
 	}
 	public void unhide()
 	{
@@ -76,6 +78,6 @@ public class Monster extends Scriptable
 
 		target.kill();
 		Effects.splatter(parent.transform.pos);
-		AOE.create(parent.transform.pos, Villager.PERCEPTION/2, "murder", 2.5f);
+		AOE.create(parent.transform.pos, Villager.PERCEPTION * 1.5f, "murder", 1.5f);
 	}
 }

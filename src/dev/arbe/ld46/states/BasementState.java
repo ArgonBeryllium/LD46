@@ -8,6 +8,7 @@ import dev.arbe.engine.states.State;
 import dev.arbe.engine.systems.input.InputSystem;
 import dev.arbe.engine.systems.rendering.RenderSystem;
 import dev.arbe.engine.systems.rendering.TextRenderer;
+import dev.arbe.engine.systems.sound.SoundSystem;
 import dev.arbe.ld46.GameManager;
 import dev.arbe.ld46.Main;
 
@@ -88,6 +89,7 @@ public class BasementState extends State
 		{
 			if(code== KeyEvent.VK_ENTER)
 			{
+				SoundSystem.playSFX(Main.sounds.getAsset("beep"));
 				if(GameManager.day<4)
 					State.setActiveState(1);
 				else
