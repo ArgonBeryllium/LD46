@@ -7,7 +7,7 @@ import dev.arbe.engine.states.State;
 
 public class Raycast
 {
-	static final float STEP_SIZE = .25f;
+	static final float STEP_SIZE = .4f;
 
 	public static GameObject rayCast(GameObject origin, WVec2 dir, float dist)
 	{

@@ -21,10 +21,10 @@ public class BasementState extends State
 			{
 				"[Bulbo] seems satisfied.\nYou're not really sure if the constant \nlow growls and rumbles are a sign of\ncontent or hostility, " +
 				"but either way,\nit hasn't bitten you yet, which you\ntake as a good sign.\nBetter keep this pace up.",
-				"[Bulbo]'s looking rather full. That seemed like definitely enough civilians for the day.",
-				"[Bulbo]'s stomach isn't rumbling as much. Or maybe it's stopped growling. Either way, seems you're doing pretty well.",
-				"[Bulbo]'s sleeping comfortably in the corner. Seeing it like this is oddly soothing.",
-				"[Bulbo]'s sleeping like a baby. A monstrous, human-feasting baby, but a baby nontheless."
+				"[Bulbo]'s looking rather full.\nThat seemed like definitely enough\ncivilians for the day.",
+				"[Bulbo]'s stomach isn't rumbling\nas much.\nOr maybe it's stopped growling.\nEither way, seems you're doing pretty well.",
+				"[Bulbo]'s sleeping like a baby.\nA monstrous, human-feasting baby,\nbut a baby nontheless.",
+				"[Bulbo]'s sleeping comfortably in the\ncorner.\nSeeing it like this is oddly soothing."
 			},
 	MESSAGES_BAD =
 			{
@@ -60,6 +60,7 @@ public class BasementState extends State
 	@Override
 	public void load()
 	{
+		GameManager.day++;
 		if(GameManager.day >= 4 && !GameManager.appropriateDeaths())
 		{
 			GameManager.initEnding(GameManager.ENDING_DEVOURED);
@@ -87,10 +88,14 @@ public class BasementState extends State
 		{
 			if(code== KeyEvent.VK_ENTER)
 			{
-				if(GameManager.day<5)
+				if(GameManager.day<4)
 					State.setActiveState(1);
 				else
+				{
+					try { Thread.sleep(500); }
+					catch (InterruptedException e) { e.printStackTrace(); }
 					GameManager.initEnding(GameManager.ENDING_FRIDAY);
+				}
 			}
 		}
 	}

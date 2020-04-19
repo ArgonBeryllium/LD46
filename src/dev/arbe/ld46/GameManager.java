@@ -6,7 +6,7 @@ public class GameManager
 {
 	public static final int ENDING_DEVOURED = 0, ENDING_ARREST = 1, ENDING_FRIDAY = 2,
 							AVG_DEATHS = 4;
-	public static String name = "Bulbo";
+	public static String name = "";
 
 	public static int day = 0;
 	public static int dead = 0;

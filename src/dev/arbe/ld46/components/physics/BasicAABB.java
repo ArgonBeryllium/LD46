@@ -1,6 +1,7 @@
 package dev.arbe.ld46.components.physics;
 
 import dev.arbe.engine.maths.Transform;
+import dev.arbe.engine.maths.vectors.Vec2;
 import dev.arbe.engine.maths.vectors.WVec2;
 import dev.arbe.engine.systems.GameEvent;
 import dev.arbe.engine.systems.scriptable.Scriptable;
@@ -70,7 +71,6 @@ public class BasicAABB extends Scriptable
 	public void resolveCol(BasicAABB other)
 	{
 		/*
-	}
 		//collision normal
 		WVec2 n = this.prevMin.minus(this.min);
 
@@ -91,12 +91,45 @@ public class BasicAABB extends Scriptable
 		if(other.isStatic)
 		{
 			otherAmt = 0;
-			thisAmt = thisAmt==0?0:1;
+			thisAmt *= 2;
 		}
 		//endregion
 
 		thisAmt *= .05f;
 		otherAmt *= .05f;
+
+		this.parent.transform.pos = this.parent.transform.pos.plus(n.times(thisAmt));
+		other.parent.transform.pos = other.parent.transform.pos.minus(n.times(otherAmt));
+	}
+	public void resolveCol(BasicAABB other, double delta)
+	{
+		/*
+		//collision normal
+		WVec2 n = this.prevMin.minus(this.min);
+
+		//check if the other initiated the collision and correct the normal if so
+		if(n.x==0 && n.y==0)
+			n = other.min.minus(other.prevMin);
+		*/
+		WVec2 n = parent.transform.pos.minus(other.parent.transform.pos);
+
+		//region deciding the resolution weights
+		float thisAmt = .5f, otherAmt = .5f;
+
+		if(this.isStatic)
+		{
+			thisAmt = 0;
+			otherAmt = 1;
+		}
+		if(other.isStatic)
+		{
+			otherAmt = 0;
+			thisAmt *= 2;
+		}
+		//endregion
+
+		thisAmt *= .05f * delta;
+		otherAmt *= .05f * delta;
 
 		this.parent.transform.pos = this.parent.transform.pos.plus(n.times(thisAmt));
 		other.parent.transform.pos = other.parent.transform.pos.minus(n.times(otherAmt));

@@ -19,7 +19,9 @@ public abstract class EndingState extends State
 	protected BufferedImage image;
 
 	@Override
-	protected void start()
+	protected void start() {}
+	@Override
+	public void load()
 	{
 		GameObject o = createObj(new GameObject());
 		o.addComponent(new TextRenderer(title, Main.font));
@@ -31,14 +33,16 @@ public abstract class EndingState extends State
 		o.getComponent(TextRenderer.class).text = o.getComponent(TextRenderer.class).text.replace("[Bulbo]", GameManager.name);
 		o.transform.pos.y = 3;
 		o.transform.pos.x = -10;
+		RenderSystem.setBackgroundColour(Color.black);
 
 		mainCam.scale = .5f;
 	}
 
 	@Override
-	public void load()
+	public void unload()
 	{
-		RenderSystem.setBackgroundColour(Color.black);
+		while (objs.size()!=0)
+			removeObj(objs.get(0));
 	}
 
 	@Override

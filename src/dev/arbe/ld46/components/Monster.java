@@ -4,8 +4,11 @@ import dev.arbe.engine.GameObject;
 import dev.arbe.engine.maths.vectors.Vec2;
 import dev.arbe.engine.systems.GameEvent;
 import dev.arbe.engine.systems.rendering.Renderer;
+import dev.arbe.engine.systems.rendering.TexturedRenderer;
 import dev.arbe.engine.systems.scriptable.Scriptable;
 import dev.arbe.ld46.GameManager;
+import dev.arbe.ld46.Main;
+import dev.arbe.ld46.components.effects.Effects;
 import dev.arbe.ld46.components.other.AOE;
 
 import static java.lang.Math.atan2;
@@ -48,12 +51,14 @@ public class Monster extends Scriptable
 	public void hide(HidingPlace hp)
 	{
 		place = hp;
+		place.getParent().getComponent(TexturedRenderer.class).sprite = Main.sheets.getAsset("tiles").sprites[6];
 		hp.occupied = true;
 		hidden = true;
 	}
 	public void unhide()
 	{
 		place.occupied = false;
+		place.getParent().getComponent(TexturedRenderer.class).sprite = Main.sheets.getAsset("tiles").sprites[5];
 		place = null;
 		hidden = false;
 	}
@@ -70,7 +75,7 @@ public class Monster extends Scriptable
 		parent.transform.pos = target.getParent().transform.pos;
 
 		target.kill();
-		GameManager.dead++;
+		Effects.splatter(parent.transform.pos);
 		AOE.create(parent.transform.pos, Villager.PERCEPTION/2, "murder", 2.5f);
 	}
 }

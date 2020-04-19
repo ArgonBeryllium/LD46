@@ -4,6 +4,8 @@ import dev.arbe.engine.GameObject;
 import dev.arbe.engine.maths.vectors.Vec2;
 import dev.arbe.engine.maths.vectors.WVec2;
 import dev.arbe.engine.states.State;
+import dev.arbe.ld46.GameManager;
+import dev.arbe.ld46.components.effects.Effects;
 import dev.arbe.ld46.components.physics.BasicAABB;
 import dev.arbe.ld46.components.physics.Raycast;
 
@@ -16,6 +18,8 @@ public class Entity extends BasicAABB
 	public void kill()
 	{
 		alive = false;
+		GameManager.dead++;
+		Effects.splatter(parent.transform.pos);
 		State.getActiveState().removeObj(parent);
 	}
 

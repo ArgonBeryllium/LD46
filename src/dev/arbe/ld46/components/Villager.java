@@ -1,24 +1,29 @@
 package dev.arbe.ld46.components;
 
 import dev.arbe.engine.GameObject;
+import dev.arbe.engine.WindowManager;
 import dev.arbe.engine.maths.vectors.SVec2;
 import dev.arbe.engine.maths.vectors.Vec2;
 import dev.arbe.engine.maths.vectors.WVec2;
+import dev.arbe.engine.states.State;
 import dev.arbe.engine.systems.GameEvent;
 import dev.arbe.engine.systems.rendering.Camera;
 import dev.arbe.engine.systems.rendering.Renderer;
 import dev.arbe.engine.systems.rendering.TexturedRenderer;
 import dev.arbe.ld46.GameManager;
 import dev.arbe.ld46.Main;
+import dev.arbe.ld46.components.effects.Effects;
 import dev.arbe.ld46.components.physics.BasicAABB;
 import dev.arbe.ld46.components.physics.Raycast;
+
+import java.awt.*;
 
 import static java.lang.Math.*;
 
 public class Villager extends Entity
 {
 	static final float WANDER_DISTANCE = 1;
-	public static final float PERCEPTION = 3;
+	public static final float PERCEPTION = 3.5f;
 
 	public WanderPoint target;
 	WVec2[] path;
@@ -60,6 +65,7 @@ public class Villager extends Entity
 		path = calculatePath(target.getParent().transform.pos);
 		cs = 0;
 		witness = true;
+		Effects.alert(parent.transform.pos);
 	}
 
 	public void initiateWander()
@@ -108,20 +114,20 @@ public class Villager extends Entity
 				initiateWander();
 
 			//region sight
-//			Graphics g = WindowManager.getGraphics();
+			Graphics g = WindowManager.getGraphics();
 			GameObject seen = null;
-			for(float i = -1; i < 2; i+=.5)
+			for(float i = -1; i < 2; i+=.66)
 			{
-				float f = (float) ((float)i * .2f + getParent().getComponent(Renderer.class).renderTransform.angle - PI/2);
+				float f = (float) ((float)i * .4f + getParent().getComponent(Renderer.class).renderTransform.angle - PI/2);
 
-//				g.setColor(Color.white);
+				g.setColor(Color.white);
 				seen = Raycast.rayCast(getParent(), new WVec2(cos(f), sin(f)).normalised(), PERCEPTION);
 				SVec2 p = Camera.getMain().toScreenCoords(parent.transform.pos);
 				SVec2 d = Camera.toScreenScale(new WVec2(cos(f), sin(f)).normalised().times(PERCEPTION), Camera.getMain().scale);
 
 				if(seen != null)
 				{
-//					g.setColor(Color.red);
+					g.setColor(Color.red);
 					switch (seen.tag)
 					{
 						case "villager":
@@ -135,7 +141,7 @@ public class Villager extends Entity
 							break;
 					}
 				}
-//				g.drawLine((int)p.x, (int)p.y, (int)p.x + (int)d.x, (int)p.y + (int)d.y);
+				g.drawLine((int)p.x, (int)p.y, (int)p.x + (int)d.x, (int)p.y + (int)d.y);
 			}
 			//endregion
 
@@ -144,6 +150,11 @@ public class Villager extends Entity
 			{
 				if(cs>=path.length)
 				{
+					if(Main.r.nextInt(100)==7)
+					{
+						State.getActiveState().removeObj(parent);
+						return;
+					}
 					initiateWander();
 					return;
 				}
