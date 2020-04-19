@@ -9,11 +9,9 @@ import dev.arbe.engine.states.State;
 import dev.arbe.engine.systems.animation.Puppeteer;
 import dev.arbe.engine.systems.animation.SpriteAnimation;
 import dev.arbe.engine.systems.input.InputSystem;
-import dev.arbe.engine.systems.rendering.BasicRenderer;
-import dev.arbe.engine.systems.rendering.Renderer;
-import dev.arbe.engine.systems.rendering.TextRenderer;
-import dev.arbe.engine.systems.rendering.TexturedRenderer;
+import dev.arbe.engine.systems.rendering.*;
 import dev.arbe.engine.utils.TileMap;
+import dev.arbe.ld46.GameManager;
 import dev.arbe.ld46.Main;
 import dev.arbe.ld46.components.*;
 import dev.arbe.ld46.components.physics.BasicAABB;
@@ -36,14 +34,24 @@ public class GameplayState extends State
 	TextRenderer cText;
 
 	GameObject selObj = null;
-	WVec2[] p;
+	//WVec2[] p;
 
+	float time;
 
 	float monsterAnimCountdown = 0;
 
 	@Override
 	protected void start()
 	{
+		inVec = new WVec2();
+	}
+
+	@Override
+	public void load()
+	{
+		GameManager.day++;
+		time = 0;
+
 		//region setting up the map
 		map = TileMap.loadFromFile("res/town.map", Main.sheets.getAsset("tiles"), '.', '#', '^', 'H', 'P');
 		createObj(new GameObject()).addComponent(map);
@@ -76,7 +84,6 @@ public class GameplayState extends State
 			}
 		}
 		//endregion
-
 		//region creating the player and the monster
 		player = createObj(new GameObject());
 		player.addComponent(new TexturedRenderer(Main.sheets.getAsset("people").sprites[0]));
@@ -91,7 +98,6 @@ public class GameplayState extends State
 				new SpriteAnimation(5, Main.sheets.getAsset("monster_pulse").sprites),
 				new SpriteAnimation(25, Main.sheets.getAsset("monster_bite").sprites)));
 		//endregion
-
 		//region setting up the hovertext
 		o = createObj(new GameObject());
 		cText = new TextRenderer("piss", Main.font, new SVec2(0,0));
@@ -104,17 +110,37 @@ public class GameplayState extends State
 		villager.transform.pos.x = 3;
 		villager.transform.pos.y = 2;
 		villager.addComponent(new Villager());
+	}
 
-		inVec = new WVec2();
+	@Override
+	public void unload()
+	{
+		while (objs.size()!=0)
+		{
+			removeObj(objs.get(0));
+		}
 	}
 
 	@Override
 	public void update(double delta)
 	{
+		time += delta / 7;
+
+		if(time>=12)
+		{
+			setActiveState(2);
+			return;
+		}
 		BasicAABB.handleCols();
 
+		//region camera control
+		if(InputSystem.getKey(VK_O) && mainCam.scale > .4)
+			mainCam.scale -= delta;
+		if(InputSystem.getKey(VK_I) && mainCam.scale < 1)
+			mainCam.scale += delta;
 
 		mainCam.pos = Vec2.lerp(mainCam.pos, player.transform.pos, (float)delta*3*(InputSystem.getKey(VK_SHIFT)?1.5f:1));
+		//endregion
 		player.transform.pos = player.transform.pos.plus(inVec.times(delta*2));
 
 		//region animation & aesthetics
@@ -143,6 +169,31 @@ public class GameplayState extends State
 				break;
 			}
 		}
+		//endregion
+
+		//region colour overlays
+		Graphics g = WindowManager.getGraphics();
+		if(time <= 12)
+		{
+			if(time>=11.5f)
+			{
+				g.setColor(new Color(0,0,0, time-11));
+				g.fillRect(0,0,WindowManager.getWidth(), WindowManager.getHeight());
+			}
+			g.setColor(new Color(1f - (time/12), .5f, (time/12), .3f));
+			g.fillRect(0,0,WindowManager.getWidth(), WindowManager.getHeight());
+		}
+		else
+		{
+			g.setColor(Color.BLACK);
+			g.fillRect(0,0,WindowManager.getWidth(), WindowManager.getHeight());
+		}
+		//endregion
+		//region timer
+		g.setColor(Color.WHITE);
+		float s = (float) Camera.toScreenScale(new WVec2(1, 0), 1).x;
+		g.setFont(Main.font.deriveFont(s));
+		g.drawString((int)time + ":" + (int)((time - (int)time)*60), 0, (int)s);
 		//endregion
 
 		//region handling the hovertext
@@ -183,7 +234,6 @@ public class GameplayState extends State
 		//endregion
 
 		//region pathfinding debugging
-//		Graphics g = WindowManager.getGraphics();
 //		g.setColor(Color.white);
 //		p = villager.getComponent(Villager.class).calculatePath(WanderPoint.getClosestPolicePoint(villager.transform.pos).getParent().transform.pos);
 //
@@ -195,7 +245,6 @@ public class GameplayState extends State
 //			g.drawLine((int)pp.x, (int)pp.y, (int)pc.x, (int)pc.y);
 //		}
 		//endregion
-
 		//DebugUtils.countFrames();
 	}
 

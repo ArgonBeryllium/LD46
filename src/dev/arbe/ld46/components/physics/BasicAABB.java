@@ -9,7 +9,7 @@ import java.util.ArrayList;
 
 public class BasicAABB extends Scriptable
 {
-	protected static ArrayList<BasicAABB> allAABBs = new ArrayList<BasicAABB>();
+	public static ArrayList<BasicAABB> allAABBs = new ArrayList<BasicAABB>();
 
 	public WVec2 min, max;
 
@@ -31,8 +31,8 @@ public class BasicAABB extends Scriptable
 	@Override
 	public void onParentDestroyed()
 	{
-		super.onParentDestroyed();
 		allAABBs.remove(this);
+		super.onParentDestroyed();
 	}
 
 	public static void handleCols()

@@ -8,6 +8,7 @@ import dev.arbe.engine.systems.GameEvent;
 import dev.arbe.engine.systems.rendering.Camera;
 import dev.arbe.engine.systems.rendering.Renderer;
 import dev.arbe.engine.systems.rendering.TexturedRenderer;
+import dev.arbe.ld46.GameManager;
 import dev.arbe.ld46.Main;
 import dev.arbe.ld46.components.physics.BasicAABB;
 import dev.arbe.ld46.components.physics.Raycast;
@@ -79,7 +80,7 @@ public class Villager extends Entity
 			{
 				if(Vec2.dist(parent.transform.pos, target.getParent().transform.pos) < WANDER_DISTANCE)
 				{
-					System.out.println("ye dayd");
+					GameManager.initEnding(GameManager.ENDING_ARREST);
 					return;
 				}
 				if(path==null || cs >= path.length)
@@ -109,7 +110,7 @@ public class Villager extends Entity
 			//region sight
 //			Graphics g = WindowManager.getGraphics();
 			GameObject seen = null;
-			for(float i = -1; i < 2; i++)
+			for(float i = -1; i < 2; i+=.5)
 			{
 				float f = (float) ((float)i * .2f + getParent().getComponent(Renderer.class).renderTransform.angle - PI/2);
 
@@ -155,7 +156,7 @@ public class Villager extends Entity
 				getParent().getComponent(Renderer.class).renderTransform.angle +=
 						(atan2(target.getParent().transform.pos.x - parent.transform.pos.x,
 								parent.transform.pos.y - target.getParent().transform.pos.y)
-								- getParent().getComponent(Renderer.class).renderTransform.angle) * 5 * (double)event.args[0];
+								- getParent().getComponent(Renderer.class).renderTransform.angle) * 3 * (double)event.args[0];
 				//endregion
 			}
 			//endregion

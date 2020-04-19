@@ -5,6 +5,7 @@ import dev.arbe.engine.maths.vectors.Vec2;
 import dev.arbe.engine.systems.GameEvent;
 import dev.arbe.engine.systems.rendering.Renderer;
 import dev.arbe.engine.systems.scriptable.Scriptable;
+import dev.arbe.ld46.GameManager;
 import dev.arbe.ld46.components.other.AOE;
 
 import static java.lang.Math.atan2;
@@ -69,6 +70,7 @@ public class Monster extends Scriptable
 		parent.transform.pos = target.getParent().transform.pos;
 
 		target.kill();
+		GameManager.dead++;
 		AOE.create(parent.transform.pos, Villager.PERCEPTION/2, "murder", 2.5f);
 	}
 }

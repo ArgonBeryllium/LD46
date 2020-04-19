@@ -3,10 +3,15 @@ package dev.arbe.ld46;
 import dev.arbe.engine.AssetSet;
 import dev.arbe.engine.Game;
 import dev.arbe.engine.InitParams;
+import dev.arbe.engine.WindowManager;
 import dev.arbe.engine.states.State;
 import dev.arbe.engine.systems.rendering.SpriteSheet;
 import dev.arbe.engine.utils.files.FileUtils;
+import dev.arbe.ld46.states.BasementState;
 import dev.arbe.ld46.states.GameplayState;
+import dev.arbe.ld46.states.endings.Arrest;
+import dev.arbe.ld46.states.endings.Devoured;
+import dev.arbe.ld46.states.endings.Friday;
 
 import java.awt.*;
 import java.util.Random;
@@ -27,10 +32,11 @@ public class Main
 		sheets.addAsset("people", new SpriteSheet(FileUtils.loadImage("res/people.png"), 16, 16));
 		font = Font.createFont(Font.TRUETYPE_FONT, FileUtils.loadFile("res/FORCED_SQUARE.ttf"));
 
-
 		InitParams ip = new InitParams();
+		ip.winTitle = "DangerPet";
 		ip.fx_pix_count = 180;
-		ip.states = new State[] { new GameplayState() };
+		ip.states = new State[] { new GameplayState(), new GameplayState(), new BasementState(), new Devoured(), new Arrest(), new Friday() };
+
 		Game.init(ip);
 		Game.run();
 	}
