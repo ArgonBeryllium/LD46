@@ -1,6 +1,5 @@
 package dev.arbe.ld46.states;
 
-import dev.arbe.engine.Game;
 import dev.arbe.engine.GameObject;
 import dev.arbe.engine.WindowManager;
 import dev.arbe.engine.maths.vectors.SVec2;
@@ -47,7 +46,7 @@ public class BasementState extends State
 		GameObject o = createObj(new GameObject());
 		titleRend = new TextRenderer(WEEKDAYS[0]+ ", basement", Main.font);
 		o.addComponent(titleRend);
-		titleRend.size = 10;
+		titleRend.size = 9;
 
 		o = createObj(new GameObject());
 		msgRend = new TextRenderer("", Main.font);
@@ -62,11 +61,6 @@ public class BasementState extends State
 	public void load()
 	{
 		GameManager.day++;
-		if(GameManager.day >= 4 && !GameManager.appropriateDeaths())
-		{
-			GameManager.initEnding(GameManager.ENDING_DEVOURED);
-			return;
-		}
 		msg = GameManager.appropriateDeaths()?MESSAGES_OKAY[GameManager.day-1]:MESSAGES_BAD[GameManager.day-1];
 		msg = msg.replace("[Bulbo]", GameManager.name);
 		msg += "\n (Press [ENTER] to continue)";
@@ -78,6 +72,11 @@ public class BasementState extends State
 	@Override
 	public void update(double delta)
 	{
+		if(GameManager.day>=3)
+		{
+			GameManager.initEnding(GameManager.ENDING_DEVOURED);
+			return;
+		}
 		msgRend.screenPos = new SVec2(0, WindowManager.getHeight()/2);
 		titleRend.screenPos = new SVec2(0, titleRend.size * 4 * WindowManager.getWidth()/540);
 	}
