@@ -72,7 +72,7 @@ public class BasementState extends State
 	@Override
 	public void update(double delta)
 	{
-		if(GameManager.day>=3)
+		if(GameManager.day>=4 && !GameManager.appropriateDeaths())
 		{
 			GameManager.initEnding(GameManager.ENDING_DEVOURED);
 			return;
